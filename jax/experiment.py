@@ -33,10 +33,10 @@ import optax
 import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 
-from adversarial_robustness.jax import attacks
-from adversarial_robustness.jax import datasets
-from adversarial_robustness.jax import model_zoo
-from adversarial_robustness.jax import utils
+import attacks
+import datasets
+import model_zoo
+import utils
 
 FLAGS = flags.FLAGS
 
@@ -53,7 +53,8 @@ def get_config():
   # normalization decay or the learning rate. If you have to use a batch size
   # of 256, reduce the number of emulated workers to 1 (it should match the
   # results of using a batch size of 1024 with 4 workers).
-  train_batch_size = 1024
+  # train_batch_size = 1024
+  train_batch_size = 512
   def steps_from_epochs(n):
     return max(int(n * 50_000 / train_batch_size), 1)
   num_steps = steps_from_epochs(num_epochs)
@@ -62,12 +63,14 @@ def get_config():
   # https://github.com/deepmind/deepmind-research/tree/master/adversarial_robustness.
   # If the path is set to "cifar10_ddpm.npz" and is not found in the current
   # directory, the corresponding data will be downloaded.
-  extra_npz = 'cifar10_ddpm.npz'  # Can be `None`.
+  # extra_npz = 'cifar10_ddpm.npz'  # Can be `None`.
+  extra_npz = None
 
   # Learning rate.
   learning_rate = .1 * max(train_batch_size / 256, 1.)
   learning_rate_warmup = steps_from_epochs(10)
-  use_cosine_schedule = True
+  # use_cosine_schedule = True
+  use_cosine_schedule = False
   if use_cosine_schedule:
     learning_rate_fn = utils.get_cosine_schedule(learning_rate, num_steps,
                                                  learning_rate_warmup)
@@ -123,8 +126,10 @@ def get_config():
           batch_size=train_batch_size,
           learning_rate=learning_rate_fn,
           weight_decay=5e-4,
-          swa_decay=.995,
-          use_cutmix=False,
+          # swa_decay=.995,
+          # use_cutmix=False,
+          swa_decay=.999,
+          use_cutmix=True,
           supervised_batch_ratio=.3 if extra_npz is not None else 1.,
           extra_data_path=extra_npz,
           extra_label_smoothing=.1,
@@ -139,7 +144,7 @@ def get_config():
           attack=eval_attack),
   )))
 
-  config.checkpoint_dir = '/tmp/jaxline/robust'
+  config.checkpoint_dir = './exps/jaxline/robust-cutmix-28-10-swish'
   config.train_checkpoint_all_hosts = False
   config.training_steps = num_steps
   config.interval_type = 'steps'

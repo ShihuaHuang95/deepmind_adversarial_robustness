@@ -21,7 +21,7 @@ from absl import flags
 from jaxline import platform
 import tensorflow.compat.v2 as tf
 
-from adversarial_robustness.jax import experiment
+import experiment
 
 if __name__ == '__main__':
   flags.mark_flag_as_required('config')
