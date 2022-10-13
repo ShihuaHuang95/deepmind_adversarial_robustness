@@ -18,7 +18,7 @@ from absl import app
 import jax
 import jax.numpy as jnp
 from jaxline import utils as jl_utils
-from adversarial_robustness.jax import experiment
+import experiment
 
 
 @jl_utils.disable_pmap_jit

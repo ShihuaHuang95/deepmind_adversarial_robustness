@@ -25,9 +25,9 @@ import tensorflow.compat.v2 as tf
 import tensorflow_datasets as tfds
 import tqdm
 
-from adversarial_robustness.jax import attacks
-from adversarial_robustness.jax import datasets
-from adversarial_robustness.jax import model_zoo
+import attacks
+import datasets
+import model_zoo
 
 _CKPT = flags.DEFINE_string(
     'ckpt', None, 'Path to checkpoint.')

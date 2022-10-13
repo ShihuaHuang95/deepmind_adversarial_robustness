@@ -13,32 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set -euf -o pipefail  # Stop at failure.
+# set -euf -o pipefail  # Stop at failure.
 
-python3 -m venv /tmp/adversarial_robustness_venv
-source /tmp/adversarial_robustness_venv/bin/activate
+# python3 -m venv /tmp/adversarial_robustness_venv
+# source /tmp/adversarial_robustness_venv/bin/activate
 pip install -U pip
-pip install -r adversarial_robustness/requirements.txt
+pip install -r requirements.txt
 
-python3 -m adversarial_robustness.jax.eval \
-  --ckpt=dummy \
-  --dataset=cifar10 \
-  --width=1 \
-  --depth=10 \
-  --batch_size=1 \
-  --num_batches=1
-
-python3 -m adversarial_robustness.pytorch.eval \
-  --ckpt=dummy \
-  --dataset=cifar10 \
-  --width=1 \
-  --depth=10 \
-  --batch_size=1 \
-  --num_batches=1 \
-  --nouse_cuda
+python3 -m eval --ckpt=dummy --dataset=cifar10 --width=1 --depth=10 --batch_size=1 --num_batches=1
 
 # We disable pmap/jit to avoid compilation during testing. Since the
 # test only runs a single step, it would not benefit from such a compilation
 # anyways.
-python3 -m adversarial_robustness.jax.experiment_test \
-  --jaxline_disable_pmap_jit=True
+python3 -m experiment_test --jaxline_disable_pmap_jit=True

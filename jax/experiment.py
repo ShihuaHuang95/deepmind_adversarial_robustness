@@ -40,6 +40,10 @@ import utils
 
 FLAGS = flags.FLAGS
 
+# Question: 1. which result is based on turinig label smoothing on? It seems the label smoothing only works when there is extra data, such as ddpm and 500k?
+# Pay attention to this: The original implementation did not include the validation subset for early stop? What the hell?
+
+# For Data-Augmentation paper: SGD, weight decay@0.0005, 400epochs, bs@512, step lr scheduler, lr@bs/256 * 0.1, tau@0.999, cutout window size?
 
 def get_config():
   """Return config object for training."""
@@ -80,11 +84,14 @@ def get_config():
 
   # Model definition.
   model_ctor = model_zoo.WideResNet
-  model_kwargs = dict(
-      num_classes=num_classes,
-      depth=28,
-      width=10,
-      activation='swish')
+  # model_kwargs = dict(
+  #     num_classes=num_classes,
+  #     depth=28,
+  #     width=10,
+  #     activation='swish')
+
+  # model_kwargs = dict(num_classes=num_classes, depths=[4, 4, 4], width=10, activation='swish')    # Baseline
+  model_kwargs = dict(num_classes=num_classes, depths=[14, 14, 7], width=10, activation='relu')    # A1
 
   # Attack used during training (can be None).
   epsilon = 8 / 255
@@ -139,12 +146,14 @@ def get_config():
           # intervals. Setting it to zero will not evaluate while training,
           # unless `--jaxline_mode` is set to `train_eval_multithreaded`, which
           # asynchronously evaluates checkpoints.
-          interval=steps_from_epochs(40),
+          interval=steps_from_epochs(10),
           batch_size=test_batch_size,
           attack=eval_attack),
   )))
 
-  config.checkpoint_dir = './exps/jaxline/robust-cutmix-28-10-swish'
+  # config.checkpoint_dir = './exps/jaxline/robust-cutmix-28-10-swish'
+  # config.checkpoint_dir = "./exps/jaxline/robust-cutmix-28-10-swish-10e-eval"   # Baseline
+  config.checkpoint_dir = "./exps/jaxline/robust-cutmix-drna1-relu-10e-eval"
   config.train_checkpoint_all_hosts = False
   config.training_steps = num_steps
   config.interval_type = 'steps'

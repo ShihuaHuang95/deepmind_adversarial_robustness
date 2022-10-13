@@ -8,6 +8,8 @@ This repository contains the code needed to evaluate models trained in
 [Improving Robustness using Generated Data](https://arxiv.org/abs/2110.09468)
 (Gowal et al., 2021).
 
+# Pay attention to install 
+Please just follow the requirements.txt to install the libraries (paticular version) and make sure some are install with GPU.!!!
 
 ## Contents
 

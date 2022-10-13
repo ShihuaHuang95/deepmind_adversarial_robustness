@@ -82,14 +82,15 @@ class WideResNet(hk.Module):
 
   def __init__(self,
                num_classes: int = 10,
-               depth: int = 28,
+              #  depth: int = 28,
+               depths: list = [4, 4, 4],
                width: int = 10,
                activation: str = 'relu',
                norm_args: Optional[Dict[str, Any]] = None,
                name: Optional[str] = None):
     super(WideResNet, self).__init__(name=name)
-    if (depth - 4) % 6 != 0:
-      raise ValueError('depth should be 6n+4.')
+    # if (depth - 4) % 6 != 0:
+    #   raise ValueError('depth should be 6n+4.')
     self._activation = getattr(jax.nn, activation)
     if norm_args is None:
       norm_args = {
@@ -110,13 +111,14 @@ class WideResNet(hk.Module):
         num_classes,
         w_init=jnp.zeros,
         name='logits')
+    # We need to implement our own RobustScaling network based on this repo
 
-    blocks_per_layer = (depth - 4) // 6
+    # blocks_per_layer = (depth - 4) // 6
     filter_sizes = [width * n for n in [16, 32, 64]]
     self._blocks = []
     for layer_num, filter_size in enumerate(filter_sizes):
       blocks_of_layer = []
-      for i in range(blocks_per_layer):
+      for i in range(depths[layer_num]):
         stride = 2 if (layer_num != 0 and i == 0) else 1
         projection_shortcut = (i == 0)
         blocks_of_layer.append(_WideResNetBlock(

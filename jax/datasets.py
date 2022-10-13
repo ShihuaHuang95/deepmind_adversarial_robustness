@@ -31,8 +31,7 @@ _CIFAR100_STD = (0.2673, 0.2564, 0.2762)
 
 _DATA_URL = 'https://storage.googleapis.com/dm-adversarial-robustness/'
 _ALLOWED_FILES = ('cifar10_ddpm.npz',)
-_WEBPAGE = ('https://github.com/deepmind/deepmind-research/tree/master/'
-            'adversarial_robustness')
+_WEBPAGE = ('https://github.com/deepmind/deepmind-research/tree/master/adversarial_robustness')
 
 
 def cifar10_preprocess(mode: str = 'train'):
